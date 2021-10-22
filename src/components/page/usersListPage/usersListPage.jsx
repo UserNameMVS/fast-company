@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import api from '../api'
-import GroupList from './groupLIst'
-import UsersTable from './usersTable'
-import Pagination from './pagination'
-import SearchStatus from './searchStatus'
-import Search from './search'
-import { paginate } from '../utils/paginate'
+import api from '../../../api'
+import GroupList from '../../common/groupList'
+import UsersTable from '../../UI/usersTable'
+import Pagination from '../../common/pagination'
+import SearchStatus from '../../UI/searchStatus'
+import SearchField from '../../UI/searchField'
+import { paginate } from '../../../utils/paginate'
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 
-const Users = () => {
+const UsersListPage = () => {
   const pageSize = 8
   const [currentPage, setCurrentPage] = useState(1)
   const [professions, setProfession] = useState()
@@ -45,7 +45,7 @@ const Users = () => {
 
   useEffect(() => {
     setCurrentPage(1)
-  }, [selectedProf])
+  }, [selectedProf, searchQuery])
 
   const handleProfessionSelect = (item) => {
     setSelectedProf(item)
@@ -66,20 +66,19 @@ const Users = () => {
   }
 
   if (users) {
-    const filteredUsers = selectedProf
+    const filteredUsers = searchQuery
+      ? users.filter((u) => u.name.toLowerCase().includes(searchQuery.toLowerCase()))
+      : selectedProf
       ? users.filter((user) => JSON.stringify(user.profession) === JSON.stringify(selectedProf))
       : users
 
     const sortedUsers = _.orderBy(filteredUsers, [sortBy.path], [sortBy.order])
 
-    const searchedUsers = searchQuery
-      ? sortedUsers.filter((u) => u.name.toLowerCase().includes(searchQuery.toLowerCase()))
-      : sortedUsers
+    const usersCrop = paginate(sortedUsers, currentPage, pageSize)
 
-    const usersCrop = paginate(searchedUsers, currentPage, pageSize)
     const clearFilter = () => setSelectedProf()
 
-    const count = searchedUsers.length
+    const count = filteredUsers.length
 
     return (
       <>
@@ -101,7 +100,7 @@ const Users = () => {
           )}
           <div className="d-flex flex-column flex-grow-1 me-3">
             <SearchStatus count={count} />
-            <Search value={searchQuery} onSearch={handleSearch} />
+            <SearchField value={searchQuery} onSearch={handleSearch} />
             {count > 0 && (
               <UsersTable
                 users={usersCrop}
@@ -128,8 +127,8 @@ const Users = () => {
   return 'Loading...'
 }
 
-Users.propTypes = {
+UsersListPage.propTypes = {
   users: PropTypes.oneOfType([PropTypes.object, PropTypes.array])
 }
 
-export default Users
+export default UsersListPage

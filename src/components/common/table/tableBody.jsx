@@ -1,9 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
-import { Link } from 'react-router-dom'
 
-function TableBody({ data, columns }) {
+const TableBody = ({ data, columns }) => {
   const renderItem = (item, column) => {
     const component = columns[column].component
     if (component) {
@@ -20,13 +19,7 @@ function TableBody({ data, columns }) {
       {data.map((item) => (
         <tr key={item._id}>
           {Object.keys(columns).map((column) => (
-            <td key={column}>
-              {column === 'name' ? (
-                <Link to={`/users/${item._id}`}>{renderItem(item, column)}</Link>
-              ) : (
-                renderItem(item, column)
-              )}
-            </td>
+            <td key={column}>{renderItem(item, column)}</td>
           ))}
         </tr>
       ))}

@@ -1,5 +1,5 @@
 import React from 'react'
-import { declOfNum } from '../utils/declination'
+import { declOfNum } from '../../utils/declination'
 import PropTypes from 'prop-types'
 
 const SearchStatus = ({ count }) => {

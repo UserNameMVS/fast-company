@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const Search = ({ value, onSearch }) => {
+const SearchField = ({ value, onSearch }) => {
   return (
     <form className="d-flex mb-3">
       <input
@@ -16,9 +16,9 @@ const Search = ({ value, onSearch }) => {
   )
 }
 
-Search.propTypes = {
+SearchField.propTypes = {
   onSearch: PropTypes.func.isRequired,
   value: PropTypes.string
 }
 
-export default Search
+export default SearchField

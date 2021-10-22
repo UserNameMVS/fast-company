@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom'
 
 function navBar() {
   return (
-    <ul className="nav">
+    <ul className="nav mb-4">
       <li className="nav-item">
-        <Link className="nav-link active" aria-current="page" to="/">
+        <Link className="nav-link" aria-current="page" to="/">
           Main
         </Link>
       </li>

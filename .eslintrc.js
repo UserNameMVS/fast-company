@@ -13,7 +13,14 @@ module.exports = {
   },
   plugins: ['react'],
   rules: {
-    'indent': ['error', 2, { SwitchCase: 1 }],
+    'indent': [
+      'error',
+      2,
+      {
+        SwitchCase: 1,
+        ignoredNodes: ['ConditionalExpression']
+      }
+    ],
     'semi': [2, 'never'],
     'space-before-function-paren': [
       'error',
@@ -24,7 +31,7 @@ module.exports = {
     ],
     'quotes': ['error', 'single', { avoidEscape: true, allowTemplateLiterals: true }],
     'multiline-ternary': [0, 'always'],
-    'operator-linebreak': ['error', 'before'],
+    'operator-linebreak': ['error', 'before', { overrides: { '&&': 'after', '=': 'ignore' } }],
     'quote-props': ['error', 'consistent']
   }
 }
