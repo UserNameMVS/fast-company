@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react'
-import api from '../../../api'
-import GroupList from '../../common/groupList'
-import UsersTable from '../../UI/usersTable'
-import Pagination from '../../common/pagination'
-import SearchStatus from '../../UI/searchStatus'
-import SearchField from '../../UI/searchField'
-import { paginate } from '../../../utils/paginate'
 import _ from 'lodash'
 import PropTypes from 'prop-types'
+import React, { useEffect, useState } from 'react'
+import api from '../../../api'
+import { useUser } from '../../../hooks/useUsers'
+import { paginate } from '../../../utils/paginate'
+import GroupList from '../../common/groupList'
+import Pagination from '../../common/pagination'
+import SearchField from '../../UI/searchField'
+import SearchStatus from '../../UI/searchStatus'
+import UsersTable from '../../UI/usersTable'
 
 const UsersListPage = () => {
   const pageSize = 8
@@ -15,28 +16,25 @@ const UsersListPage = () => {
   const [professions, setProfession] = useState()
   const [selectedProf, setSelectedProf] = useState()
   const [sortBy, setSortBy] = useState({ path: 'name', order: 'asc' })
-  const [users, setUsers] = useState()
   const [searchQuery, setSearchQuery] = useState('')
 
-  useEffect(() => {
-    api.users.fetchAll().then((data) => {
-      setUsers(data)
-    })
-  }, [])
+  const { users } = useUser()
 
   const handleDelete = (userId) => {
-    setUsers(users.filter((user) => user._id !== userId))
+    // setUsers(users.filter((user) => user._id !== userId))
+    console.log(userId)
   }
 
   const handleToggleBookMark = (id) => {
-    setUsers(
-      users.map((user) => {
-        if (user._id === id) {
-          return { ...user, bookmark: !user.bookmark }
-        }
-        return user
-      })
-    )
+    const newArray = users.map((user) => {
+      if (user._id === id) {
+        return { ...user, bookmark: !user.bookmark }
+      }
+      return user
+    })
+
+    // setUsers(newArray)
+    console.log(newArray)
   }
 
   useEffect(() => {

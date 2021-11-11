@@ -6,15 +6,11 @@ export function date(ms) {
   const m10 = 60 * 10
   const m30 = 60 * 30
 
-  if (s < m) {
-    return ' - 1 минуту назад'
-  } else if (s < m5) {
-    return ' - 5 минут назад'
-  } else if (s < m10) {
-    return ' - 10 минут назад'
-  } else if (s < m30) {
-    return ' - 30 минут назад'
-  } else {
+  if (s < m) return ' - 1 минуту назад'
+  if (s < m5) return ' - 5 минут назад'
+  if (s < m10) return ' - 10 минут назад'
+  if (s < m30) return ' - 30 минут назад'
+  else {
     const date = new Date(ms)
     const yy = date.getFullYear()
     const month = date.getMonth()
