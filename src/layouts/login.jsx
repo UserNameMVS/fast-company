@@ -11,6 +11,8 @@ const Login = () => {
     setFormType((prevState) => (prevState === 'register' ? 'login' : 'register'))
   }
 
+  console.log(process.env)
+
   return (
     <div className="container">
       <div className="row">

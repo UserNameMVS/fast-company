@@ -5,7 +5,7 @@ import { toast } from 'react-toastify'
 
 const ProfessionContext = React.createContext()
 
-export const useProfession = () => {
+export const useProfessions = () => {
   return useContext(ProfessionContext)
 }
 
@@ -53,5 +53,5 @@ export const ProfessionProvider = ({ children }) => {
 }
 
 ProfessionProvider.propTypes = {
-  children: PropTypes.oneOfType(PropTypes.arrayOf[PropTypes.node], PropTypes.node)
+  children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node])
 }
