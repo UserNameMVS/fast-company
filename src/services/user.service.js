@@ -10,6 +10,10 @@ const userService = {
   create: async (payload) => {
     const { data } = await httpService.put(userEndPoint + payload._id, payload)
     return data
+  },
+  post: async () => {
+    const { data } = await httpService.post(userEndPoint)
+    return data
   }
 }
 

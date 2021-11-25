@@ -8,7 +8,7 @@ import CheckBoxField from '../common/form/checkBoxField'
 import { useQualities } from '../../hooks/useQualities'
 import { useProfessions } from '../../hooks/useProfession'
 import { useAuth } from '../../hooks/useAuth'
-import { useHistory } from 'react-router'
+import { useHistory } from 'react-router-dom'
 
 const RegisterForm = () => {
   const [data, setData] = useState({
