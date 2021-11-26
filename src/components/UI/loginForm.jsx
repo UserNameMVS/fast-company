@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import TextField from '../../components/common/form/textField'
+import { useHistory } from 'react-router-dom'
+import TextField from '../common/form/textField'
+import { useAuth } from '../../hooks/useAuth'
 import { validator } from '../../utils/validator'
 import CheckBoxField from '../common/form/checkBoxField'
-import { useLogin } from '../../hooks/useLogin'
-import { useHistory } from 'react-router-dom'
 
 const LoginForm = () => {
   const [data, setData] = useState({ email: '', password: '', stayOn: false })
   const [errors, setErrors] = useState({})
-  const { signIn } = useLogin()
+  const [enterError, setEnterError] = useState(null)
+  const { signIn } = useAuth()
   const history = useHistory()
 
   const handleChange = (target) => {
@@ -16,18 +17,15 @@ const LoginForm = () => {
       ...prevState,
       [target.name]: target.value
     }))
+    setEnterError(null)
   }
 
   const validatorConfig = {
     email: {
-      isRequired: { message: 'Электронная почта обязательна для заполнения' },
-      isEmail: { message: 'Email введен не корректно' }
+      isRequired: { message: 'Электронная почта обязательна для заполнения' }
     },
     password: {
-      isRequired: { message: 'Необходимо указать пароль' },
-      isCapitalSymbol: { message: 'Пароль должен содержать хотя бы одну заглавную букву' },
-      isContainDigit: { message: 'Пароль должен содержать хотя бы одну цифру' },
-      min: { message: 'Длинна пароля должна быть не меннее 8 символов', value: 8 }
+      isRequired: { message: 'Необходимо указать пароль' }
     }
   }
 
@@ -46,9 +44,9 @@ const LoginForm = () => {
     e.preventDefault()
     try {
       await signIn(data)
-      history.push('/users')
+      history.push('/')
     } catch (error) {
-      setErrors(error)
+      setEnterError(error.message)
     }
   }
 
@@ -73,7 +71,11 @@ const LoginForm = () => {
       <CheckBoxField name="stayOn" value={data.stayOn} onChange={handleChange}>
         Оставаться в системе
       </CheckBoxField>
-      <button className="btn btn-primary w-100 mx-auto" type="submit" disabled={!isValid}>
+      {enterError && <p className="text-danger">{enterError}</p>}
+      <button
+        className="btn btn-primary w-100 mx-auto"
+        type="submit"
+        disabled={!isValid || enterError}>
         Submit
       </button>
     </form>

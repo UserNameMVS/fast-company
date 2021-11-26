@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import TextField from '../../components/common/form/textField'
-import { validator } from '../../utils/validator'
-import SelectField from '../common/form/selectField'
-import RadioField from '../common/form/radioField'
-import MultiSelectField from '../common/form/multiSelectField'
-import CheckBoxField from '../common/form/checkBoxField'
-import { useQualities } from '../../hooks/useQualities'
-import { useProfessions } from '../../hooks/useProfession'
-import { useAuth } from '../../hooks/useAuth'
 import { useHistory } from 'react-router-dom'
+import TextField from '../../components/common/form/textField'
+import { useAuth } from '../../hooks/useAuth'
+import { useProfessions } from '../../hooks/useProfession'
+import { useQualities } from '../../hooks/useQualities'
+import { validator } from '../../utils/validator'
+import CheckBoxField from '../common/form/checkBoxField'
+import MultiSelectField from '../common/form/multiSelectField'
+import RadioField from '../common/form/radioField'
+import SelectField from '../common/form/selectField'
 
 const RegisterForm = () => {
   const [data, setData] = useState({

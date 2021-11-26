@@ -7,7 +7,12 @@ import { setTokens } from '../services/localStorage.service'
 
 const AuthContext = React.createContext()
 
-const httpAuth = axios.create()
+const httpAuth = axios.create({
+  baseURL: 'https://identitytoolkit.googleapis.com/v1/',
+  params: {
+    key: process.env.REACT_APP_FIREBASE_KEY
+  }
+})
 
 export const useAuth = () => {
   return useContext(AuthContext)
@@ -39,10 +44,12 @@ const AuthProvider = ({ children }) => {
   }
 
   const signUp = async ({ email, password, ...rest }) => {
-    const url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.REACT_APP_FIREBASE_KEY}`
-
     try {
-      const { data } = await httpAuth.post(url, { email, password, returnSecureToken: true })
+      const { data } = await httpAuth.post('accounts:signUp', {
+        email,
+        password,
+        returnSecureToken: true
+      })
 
       setTokens(data)
       await createUser({ _id: data.localId, email, ...rest })
@@ -60,7 +67,30 @@ const AuthProvider = ({ children }) => {
     }
   }
 
-  return <AuthContext.Provider value={{ signUp, currentUser }}>{children}</AuthContext.Provider>
+  const signIn = async ({ email, password }) => {
+    try {
+      const { data } = await httpAuth.post('accounts:signInWithPassword', {
+        email,
+        password,
+        returnSecureToken: true
+      })
+      setTokens(data)
+    } catch (error) {
+      errorCatcher(error)
+      const { code, message } = error.response.data.error
+      if (code === 400) {
+        if (message === 'EMAIL_NOT_FOUND' || message === 'INVALID_PASSWORD') {
+          throw Error('Адрес почты и/или пароль указаны неверно!')
+        } else {
+          throw Error('Слишком много попыток входа. Попробуйте позднее')
+        }
+      }
+    }
+  }
+
+  return (
+    <AuthContext.Provider value={{ signUp, signIn, currentUser }}>{children}</AuthContext.Provider>
+  )
 }
 
 AuthProvider.propTypes = {
