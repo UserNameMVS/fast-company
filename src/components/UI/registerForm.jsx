@@ -11,7 +11,9 @@ import RadioField from '../common/form/radioField'
 import SelectField from '../common/form/selectField'
 
 const RegisterForm = () => {
+  const history = useHistory()
   const [data, setData] = useState({
+    name: '',
     email: '',
     password: '',
     profession: '',
@@ -19,13 +21,15 @@ const RegisterForm = () => {
     qualities: [],
     licence: false
   })
+  const { signUp } = useAuth()
   const { qualities } = useQualities()
   const qualitiesList = qualities.map((q) => ({ label: q.name, value: q._id }))
   const { professions } = useProfessions()
+  const professionsList = professions.map((p) => ({
+    label: p.name,
+    value: p._id
+  }))
   const [errors, setErrors] = useState({})
-  const { signUp } = useAuth()
-
-  const history = useHistory()
 
   const handleChange = (target) => {
     setData((prevState) => ({
@@ -35,6 +39,10 @@ const RegisterForm = () => {
   }
 
   const validatorConfig = {
+    name: {
+      isRequired: { message: 'Имя обязательно для заполнения' },
+      min: { message: 'Длинна имени не может быть меннее 3 символов', value: 3 }
+    },
     email: {
       isRequired: { message: 'Электронная почта обязательна для заполнения' },
       isEmail: { message: 'Email введен не корректно' }
@@ -82,6 +90,13 @@ const RegisterForm = () => {
   return (
     <form onSubmit={handleSubmit}>
       <TextField
+        label="Имя"
+        name="name"
+        value={data.name}
+        onChange={handleChange}
+        error={errors.name}
+      />
+      <TextField
         label="Эл.почта"
         type="email"
         name="email"
@@ -101,7 +116,7 @@ const RegisterForm = () => {
         label="Выбери свою профессию"
         name="profession"
         defaultOption="Choose..."
-        options={professions}
+        options={professionsList}
         onChange={handleChange}
         value={data.profession}
         error={errors.profession}

@@ -6,11 +6,11 @@ import { validator } from '../../utils/validator'
 import CheckBoxField from '../common/form/checkBoxField'
 
 const LoginForm = () => {
+  const history = useHistory()
   const [data, setData] = useState({ email: '', password: '', stayOn: false })
   const [errors, setErrors] = useState({})
   const [enterError, setEnterError] = useState(null)
   const { signIn } = useAuth()
-  const history = useHistory()
 
   const handleChange = (target) => {
     setData((prevState) => ({
@@ -42,9 +42,12 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    const isValid = validate()
+    if (!isValid) return
+
     try {
       await signIn(data)
-      history.push('/')
+      history.push(history.location.state ? history.location.state.from.pathname : '/')
     } catch (error) {
       setEnterError(error.message)
     }

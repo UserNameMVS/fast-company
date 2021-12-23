@@ -14,12 +14,6 @@ export const ProfessionProvider = ({ children }) => {
   const [isLoading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  const errorCatcher = (error) => {
-    const { message } = error.response.data
-    setError(message)
-    setLoading(false)
-  }
-
   useEffect(() => {
     if (error !== null) {
       toast(error)
@@ -37,6 +31,12 @@ export const ProfessionProvider = ({ children }) => {
     }
   }
 
+  function errorCatcher(error) {
+    const { message } = error.response.data
+    setError(message)
+    setLoading(false)
+  }
+
   useEffect(() => {
     getPofessionsList()
   }, [])
@@ -46,7 +46,8 @@ export const ProfessionProvider = ({ children }) => {
   }
 
   return (
-    <ProfessionContext.Provider value={{ professions, isLoading, getProfession }}>
+    <ProfessionContext.Provider
+      value={{ professions, isLoading, getProfession }}>
       {children}
     </ProfessionContext.Provider>
   )

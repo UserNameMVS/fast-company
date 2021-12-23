@@ -14,7 +14,7 @@ const QualitiesProvider = ({ children }) => {
   const [isLoading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  const errorCatcher = (error) => {
+  function errorCatcher(error) {
     const { message } = error.response.data
     setError(message)
     setLoading(false)
