@@ -39,8 +39,10 @@ const AuthProvider = ({ children }) => {
 
   async function getUserData() {
     try {
+      setLoading(true)
       const { content } = await userService.getCurrentUser()
       setUser(content)
+      setLoading(false)
     } catch (error) {
       errorCatcher(error)
     } finally {
@@ -131,31 +133,12 @@ const AuthProvider = ({ children }) => {
     localStorageService.removeAuthData()
   }
 
-  const updateUser = async (data) => {
+  const updateUserData = async (data) => {
     try {
       const { content } = await userService.update(data)
       setUser(content)
     } catch (error) {
       errorCatcher(error)
-    }
-  }
-
-  const updateUserData = async ({ email, password = null, ...rest }) => {
-    try {
-      const { data } = await httpAuth.post('accounts:update', {
-        idToken: localStorageService.getAccessToken(),
-        email,
-        password,
-        returnSecureToken: true
-      })
-      setTokens(data)
-      await updateUser({ _id: data.localId, email, ...rest })
-    } catch (error) {
-      errorCatcher(error)
-      const { code, message } = error.response.data.error
-      if (code === 400) {
-        throw Error(message)
-      }
     }
   }
 

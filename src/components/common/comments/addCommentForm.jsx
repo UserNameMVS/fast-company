@@ -2,10 +2,17 @@ import React, { useState } from 'react'
 import TextAreaField from '../form/textAreaField'
 import { validator } from '../../../utils/validator'
 import PropTypes from 'prop-types'
+import { useParams } from 'react-router-dom'
+import { getCurrentUserId } from '../../../store/users'
+import { useSelector, useDispatch } from 'react-redux'
+import { createComment } from '../../../store/comments'
 
-const AddCommentForm = ({ onSubmit }) => {
+const AddCommentForm = () => {
+  const dispatch = useDispatch()
   const [data, setData] = useState({})
   const [errors, setErrors] = useState({})
+  const { userId } = useParams()
+  const currentUserId = useSelector(getCurrentUserId())
 
   const handleChange = (target) => {
     setData((prevState) => ({
@@ -37,7 +44,7 @@ const AddCommentForm = ({ onSubmit }) => {
     e.preventDefault()
     const isValid = validate()
     if (!isValid) return
-    onSubmit(data)
+    dispatch(createComment({ data, userId, currentUserId }))
     clearForm()
   }
 

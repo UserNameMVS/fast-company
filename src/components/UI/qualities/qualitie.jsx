@@ -1,19 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { useQualities } from '../../../hooks/useQualities'
 
-const Qualitie = ({ id }) => {
-  const { getQuality } = useQualities()
-
-  const quality = getQuality(id)
-
+const Qualitie = ({ color, name }) => {
   const getBageClasses = (color) => `badge m-2 bg-${color}`
 
-  return <span className={getBageClasses(quality.color)}>{quality.name}</span>
+  return <span className={getBageClasses(color)}>{name}</span>
 }
 
 Qualitie.propTypes = {
-  id: PropTypes.string.isRequired
+  color: PropTypes.string,
+  name: PropTypes.string
 }
 
 export default Qualitie

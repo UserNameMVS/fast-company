@@ -1,10 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { useAuth } from './useAuth'
 import { useParams } from 'react-router-dom'
 import { nanoid } from 'nanoid'
 import { toast } from 'react-toastify'
 import commentService from '../services/comment.service'
+import { useSelector } from 'react-redux'
+import { getCurrentUserId } from '../store/users'
 
 const CommentsContex = React.createContext()
 
@@ -14,8 +15,8 @@ export const useComments = () => {
 
 export const CommentsProvider = ({ children }) => {
   const { userId } = useParams()
-  const { currentUser } = useAuth()
-  const [comments, setComments] = useState()
+  const currentUserId = useSelector(getCurrentUserId())
+  const [comments, setComments] = useState([])
   const [isLoading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -28,13 +29,13 @@ export const CommentsProvider = ({ children }) => {
       ...data,
       _id: nanoid(),
       pageId: userId,
-      userId: currentUser._id,
+      userId: currentUserId,
       created_at: Date.now()
     }
 
     try {
       const { content } = await commentService.create(comment)
-      setComments((prevState) => ({ ...prevState, content }))
+      setComments((prevState) => [...prevState, content])
       setLoading(false)
     } catch (error) {
       errorCatcher(error)
@@ -55,8 +56,9 @@ export const CommentsProvider = ({ children }) => {
   async function deleteComment(id) {
     try {
       const { content } = await commentService.delete(id)
-      setComments(prevState => prevState.filter(c => c._id !== id))
-      console.log(content)
+      if (content === null) {
+        setComments((prevState) => prevState.filter((c) => c._id !== id))
+      }
     } catch (error) {
       errorCatcher(error)
     }

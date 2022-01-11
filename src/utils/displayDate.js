@@ -23,5 +23,5 @@ export function displayDate(data) {
       month: 'long'
     })}`
   }
-  return date.getFullYear() + '.' + (date.getMonth() + 1) + '_' + date.getDate()
+  return date.getFullYear() + '.' + (date.getMonth() + 1) + '.' + date.getDate()
 }

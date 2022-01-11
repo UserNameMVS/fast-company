@@ -1,48 +1,67 @@
 import React, { useState, useEffect } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+// import { useHistory, useParams } from 'react-router-dom'
 import { validator } from '../../../utils/validator'
 import TextField from '../../common/form/textField'
 import SelectField from '../../common/form/selectField'
 import RadioField from '../../common/form/radioField'
 import MultiSelectField from '../../common/form/multiSelectField'
 import BackHistoryButton from '../../common/backButton'
-import { useAuth } from '../../../hooks/useAuth'
-import { useProfessions } from '../../../hooks/useProfession'
-import { useQualities } from '../../../hooks/useQualities'
+// import { useAuth } from '../../../hooks/useAuth'
+import { useSelector, useDispatch } from 'react-redux'
+import { getQualities, getQualitiesLoadingStatus } from '../../../store/qualities'
+import { getProfessions, getProfessionsLoadingStatus } from '../../../store/professions'
+import { getCurrentUserData, updateUser } from '../../../store/users'
 
 const EditUserPage = () => {
-  const { userId } = useParams()
-  const history = useHistory()
-  const { currentUser, updateUserData } = useAuth()
+  const dispatch = useDispatch()
+  // const { userId } = useParams()
+  // const history = useHistory()
+  const currentUser = useSelector(getCurrentUserData())
+  // const { updateUserData } = useAuth()
 
-  if (userId !== currentUser._id) history.push(`/users/${currentUser._id}/edit`)
+  // if (userId !== currentUser._id) history.push(`/users/${currentUser._id}/edit`)
 
-  const { professions, isLoading: isProfessionsLoading } = useProfessions()
+  const professions = useSelector(getProfessions())
+  const isProfessionsLoading = useSelector(getProfessionsLoadingStatus())
   const professionsList = professions.map((p) => ({
     label: p.name,
     value: p._id
   }))
-  const { qualities, getQuality, isLoading: isQulitiesLoading } = useQualities()
+
+  const qualities = useSelector(getQualities())
+  const isQualitiesLoading = useSelector(getQualitiesLoadingStatus())
   const qualitiesList = qualities.map((q) => ({ label: q.name, value: q._id }))
   const [data, setData] = useState({})
   const [isLoading, setLoading] = useState(true)
   const [errors, setErrors] = useState({})
 
+  function getQualitiesListByIds(qualitiesIds) {
+    const qualitiesArray = []
+    for (const qualId of qualitiesIds) {
+      for (const quality of qualities) {
+        if (quality._id === qualId) {
+          qualitiesArray.push(quality)
+          break
+        }
+      }
+    }
+    return qualitiesArray
+  }
+
   useEffect(() => {
-    if (!isQulitiesLoading && !isProfessionsLoading) {
-      const { name, email, profession, sex, qualities } = currentUser
+    if (!isQualitiesLoading && !isProfessionsLoading) {
       setData({
-        name,
-        email,
-        profession,
-        sex,
-        qualities: transformData(qualities.map((id) => getQuality(id)))
+        ...currentUser,
+        qualities: transformData(currentUser.qualities)
       })
     }
   }, [])
 
-  function transformData(data) {
-    return data.map((qual) => ({ label: qual.name, value: qual._id }))
+  const transformData = (data) => {
+    return getQualitiesListByIds(data).map((qual) => ({
+      label: qual.name,
+      value: qual._id
+    }))
   }
 
   useEffect(() => {
@@ -61,16 +80,23 @@ const EditUserPage = () => {
     const isValid = validate()
     if (!isValid) return
     const { qualities } = data
-    try {
-      await updateUserData({
+    dispatch(
+      updateUser({
         ...currentUser,
         ...data,
         qualities: qualities.map((q) => q.value)
       })
-      history.push(`/users/${currentUser._id}`)
-    } catch (error) {
-      setErrors(error)
-    }
+    )
+    // try {
+    //   await updateUserData({
+    //     ...currentUser,
+    //     ...data,
+    //     qualities: qualities.map((q) => q.value)
+    //   })
+    //   history.push(`/users/${currentUser._id}`)
+    // } catch (error) {
+    //   setErrors(error)
+    // }
   }
 
   const validatorConfog = {
@@ -129,7 +155,7 @@ const EditUserPage = () => {
             />
             <TextField
               label="Пароль"
-              type='password'
+              type="password"
               name="password"
               value={data.password || ''}
               onChange={handleChange}

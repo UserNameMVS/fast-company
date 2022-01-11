@@ -17,7 +17,11 @@ const UsersTable = ({ users, onBookMark, ...rest }) => {
       name: 'Качества',
       component: (user) => <Qualities qualities={user.qualities} />
     },
-    professions: { name: 'Профессия', component: user => <Profession id={user.profession}/> },
+    professions: {
+      path: 'profession',
+      name: 'Профессия',
+      component: (user) => <Profession id={user.profession} />
+    },
     completedMeetings: { path: 'completedMeetings', name: 'Встретился, раз' },
     rate: { path: 'rate', name: 'Оценка' },
     bookmark: {

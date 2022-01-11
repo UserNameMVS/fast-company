@@ -1,18 +1,17 @@
 import React from 'react'
-
 import PropTypes from 'prop-types'
-import { useAuth } from '../../hooks/useAuth'
 import { Route, Redirect } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { getIsLoggedIn } from '../../store/users'
 
 const ProtectedRoute = ({ component: Component, children, ...rest }) => {
-  const { currentUser } = useAuth()
+  const isLoggedIn = useSelector(getIsLoggedIn())
 
   return (
     <Route
       {...rest}
       render={(props) => {
-        if (!currentUser) {
-          console.log(props)
+        if (!isLoggedIn) {
           return (
             <Redirect
               to={{

@@ -1,12 +1,19 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { displayDate } from '../../../utils/displayDate'
-import { useUser } from '../../../hooks/useUsers'
-import { useAuth } from '../../../hooks/useAuth'
-const Comment = ({ content, created_at: created, _id: id, userId, onRemove }) => {
-  const { getUserById } = useUser()
-  const user = getUserById(userId)
-  const { currentUser } = useAuth()
+import { useDispatch, useSelector } from 'react-redux'
+import { getUserById, getCurrentUserId } from '../../../store/users'
+import { deleteComment } from '../../../store/comments'
+
+const Comment = ({ content, created_at: created, _id: id, userId }) => {
+  const user = useSelector(getUserById(userId))
+  const currentUserId = useSelector(getCurrentUserId())
+  const dispatch = useDispatch()
+
+  const handleCommentRemove = (id) => {
+    dispatch(deleteComment(id))
+  }
+  
 
   return (
     <div className="bg-light card-body  mb-3">
@@ -26,10 +33,10 @@ const Comment = ({ content, created_at: created, _id: id, userId, onRemove }) =>
                   <p className="mb-1 ">
                     {user && user.name} <span className="small">- {displayDate(created)}</span>
                   </p>
-                  {currentUser._id === userId && (
+                  {currentUserId === userId && (
                     <button
                       className="btn btn-sm text-primary d-flex align-items-center"
-                      onClick={() => onRemove(id)}>
+                      onClick={() => handleCommentRemove(id)}>
                       <i className="bi bi-x-lg"></i>
                     </button>
                   )}

@@ -1,21 +1,21 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { useEffect, useState } from 'react'
-import { useAuth } from '../../../hooks/useAuth'
-// import api from '../../../api'
-import { useProfessions } from '../../../hooks/useProfession'
-import { useUser } from '../../../hooks/useUsers'
 import { paginate } from '../../../utils/paginate'
 import GroupList from '../../common/groupList'
 import Pagination from '../../common/pagination'
 import SearchField from '../../UI/searchField'
 import SearchStatus from '../../UI/searchStatus'
 import UsersTable from '../../UI/usersTable'
+import { useSelector } from 'react-redux'
+import { getProfessions, getProfessionsLoadingStatus } from '../../../store/professions'
+import { getUsers, getCurrentUserId } from '../../../store/users'
 
 const UsersListPage = () => {
-  const { users } = useUser()
-  const { professions, isLoading: isLoadingProfessions } = useProfessions()
-  const { currentUser } = useAuth()
+  const users = useSelector(getUsers())
+  const professions = useSelector(getProfessions())
+  const isLoadingProfessions = useSelector(getProfessionsLoadingStatus())
+  const currentUserId = useSelector(getCurrentUserId())
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedProf, setSelectedProf] = useState()
   const [sortBy, setSortBy] = useState({ path: 'name', order: 'asc' })
@@ -55,23 +55,23 @@ const UsersListPage = () => {
     setSelectedProf()
   }
 
-  function filteredUsers(data) {
+  function filterUsers(data) {
     return (
       searchQuery
         ? data.filter((u) => u.name.toLowerCase().includes(searchQuery.toLowerCase()))
         : selectedProf
-        ? data.filter((user) => JSON.stringify(user.profession) === JSON.stringify(selectedProf))
-        : data
-    ).filter((u) => u._id !== currentUser._id)
+          ? data.filter((user) => JSON.stringify(user.profession) === JSON.stringify(selectedProf))
+          : data
+    ).filter((u) => u._id !== currentUserId)
   }
 
-  const sortedUsers = _.orderBy(filteredUsers(users), [sortBy.path], [sortBy.order])
+  const sortedUsers = _.orderBy(filterUsers(users), [sortBy.path], [sortBy.order])
 
   const usersCrop = paginate(sortedUsers, currentPage, pageSize)
 
   const clearFilter = () => setSelectedProf()
 
-  const count = filteredUsers(users).length
+  const count = filterUsers(users).length
 
   return (
     <>
